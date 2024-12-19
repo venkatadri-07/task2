@@ -1,0 +1,233 @@
+import java.io.*;
+import java.util.*;
+
+// Main Class for Library Management System
+public class LibraryManagementSystem {
+    public static void main(String[] args) {
+        Library library = new Library();
+        library.loadData();
+        library.run();
+        library.saveData();
+    }
+}
+
+// Library Class to manage resources and users
+class Library {
+    private List<Item> items;
+    private List<User> users;
+    private Scanner scanner;
+
+    public Library() {
+        items = new ArrayList<>();
+        users = new ArrayList<>();
+        scanner = new Scanner(System.in);
+    }
+
+    public void loadData() {
+        // TODO: Implement file/database loading logic
+        System.out.println("Data loaded successfully.");
+    }
+
+    public void saveData() {
+        // TODO: Implement file/database saving logic
+        System.out.println("Data saved successfully.");
+    }
+
+    public void run() {
+        System.out.println("Welcome to the Library Management System");
+        while (true) {
+            System.out.println("1. Add Item\n2. Search Item\n3. Check Out Item\n4. Return Item\n5. Manage Users\n6. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            switch (choice) {
+                case 1:
+                    addItem();
+                    break;
+                case 2:
+                    searchItem();
+                    break;
+                case 3:
+                    checkOutItem();
+                    break;
+                case 4:
+                    returnItem();
+                    break;
+                case 5:
+                    manageUsers();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    private void addItem() {
+        System.out.println("Select item type: 1. Book 2. Magazine 3. DVD");
+        int type = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter author/creator: ");
+        String creator = scanner.nextLine();
+        System.out.print("Enter category: ");
+        String category = scanner.nextLine();
+
+        Item item;
+        switch (type) {
+            case 1:
+                item = new Book(title, creator, category);
+                break;
+            case 2:
+                item = new Magazine(title, creator, category);
+                break;
+            case 3:
+                item = new DVD(title, creator, category);
+                break;
+            default:
+                System.out.println("Invalid type.");
+                return;
+        }
+        items.add(item);
+        System.out.println("Item added successfully.");
+    }
+
+    private void searchItem() {
+        System.out.print("Enter search keyword: ");
+        String keyword = scanner.nextLine();
+        for (Item item : items) {
+            if (item.matches(keyword)) {
+                System.out.println(item);
+            }
+        }
+    }
+
+    private void checkOutItem() {
+        System.out.print("Enter item ID to check out: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        for (Item item : items) {
+            if (item.getId() == id && item.isAvailable()) {
+                item.checkOut();
+                System.out.println("Item checked out successfully.");
+                return;
+            }
+        }
+        System.out.println("Item not found or unavailable.");
+    }
+
+    private void returnItem() {
+        System.out.print("Enter item ID to return: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        for (Item item : items) {
+            if (item.getId() == id && !item.isAvailable()) {
+                item.returnItem();
+                System.out.println("Item returned successfully.");
+                return;
+            }
+        }
+        System.out.println("Item not found or already available.");
+    }
+
+    private void manageUsers() {
+        // TODO: Implement user management logic
+        System.out.println("User management feature coming soon.");
+    }
+}
+
+// Abstract class for Library Items
+abstract class Item {
+    private static int idCounter = 1;
+    private int id;
+    private String title;
+    private String creator;
+    private String category;
+    private boolean available;
+
+    public Item(String title, String creator, String category) {
+        this.id = idCounter++;
+        this.title = title;
+        this.creator = creator;
+        this.category = category;
+        this.available = true;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void checkOut() {
+        this.available = false;
+    }
+
+    public void returnItem() {
+        this.available = true;
+    }
+
+    public boolean matches(String keyword) {
+        return title.toLowerCase().contains(keyword.toLowerCase()) ||
+               creator.toLowerCase().contains(keyword.toLowerCase()) ||
+               category.toLowerCase().contains(keyword.toLowerCase());
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Title: " + title + ", Creator: " + creator + ", Category: " + category + ", Available: " + available;
+    }
+}
+
+// Book class extending Item
+class Book extends Item {
+    public Book(String title, String author, String category) {
+        super(title, author, category);
+    }
+}
+
+// Magazine class extending Item
+class Magazine extends Item {
+    public Magazine(String title, String editor, String category) {
+        super(title, editor, category);
+    }
+}
+
+// DVD class extending Item
+class DVD extends Item {
+    public DVD(String title, String director, String category) {
+        super(title, director, category);
+    }
+}
+
+// Abstract User Class
+abstract class User {
+    private String name;
+
+    public User(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+// Librarian Class
+class Librarian extends User {
+    public Librarian(String name) {
+        super(name);
+    }
+}
+
+// Patron Class
+class Patron extends User {
+    public Patron(String name) {
+        super(name);
+    }
+}
